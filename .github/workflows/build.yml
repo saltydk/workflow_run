@@ -25,7 +25,7 @@ jobs:
       pr_number: ${{ steps.pr_info.outputs.pr_number }}
       pr_sha: ${{ steps.pr_info.outputs.pr_sha }}
     steps:
-      - name: Debug workflow_run event
+      - name: Dump GitHub context
         env:
-          WORKFLOW_RUN: ${{ toJSON(github.event.workflow_run) }}
-        run: echo "$WORKFLOW_RUN"
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
