@@ -1,0 +1,31 @@
+name: Build PR & Deploy
+
+on:
+  workflow_run:
+    workflows: ["Trigger PR Build"]
+    types:
+      - completed
+
+concurrency:
+  group: pull-request-builds
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.repository.fork == false
+    outputs:
+      url: ${{ steps.cloudflare.outputs.deployment-url }}
+      branch_url: ${{ steps.cloudflare.outputs.pages-deployment-alias-url }}
+      pr_number: ${{ steps.pr_info.outputs.pr_number }}
+      pr_sha: ${{ steps.pr_info.outputs.pr_sha }}
+    steps:
+      - name: Debug workflow_run event
+        env:
+          WORKFLOW_RUN: ${{ toJSON(github.event.workflow_run) }}
+        run: echo "$WORKFLOW_RUN"
